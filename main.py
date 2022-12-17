@@ -1,3 +1,4 @@
+import streamlit as st
 import matplotlib.pyplot as plt
 from numpy import array
 from numpy import interp
@@ -7,10 +8,11 @@ from scipy.signal import savgol_filter
 from scipy import optimize
 from statistics import mean
 from os import listdir
-import streamlit as st
 import numpy as np
 import math
 
+st.set_page_config(layout="wide", initial_sidebar_state="auto")
+st.write("""#уй""")
 
 ###fig = plt.figure()
 plt.figure(figsize=(10, 6), dpi=180)
