@@ -9,7 +9,7 @@ chart_data = pd.DataFrame(
 st.line_chart(chart_data)
 
 
-from st.bokeh.plotting import figure
+from streamlit.bokeh.plotting import figure
 
 
 x = [1, 2, 3, 4, 5]
