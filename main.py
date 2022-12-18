@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from numpy import array
 from numpy import interp
 from numpy import linspace
-#from scipy import interpolate
+from scipy import interpolate
 from scipy import optimize
 from statistics import mean
 from os import listdir
@@ -13,7 +13,7 @@ import math
 
 ###fig = plt.figure()
 plt.figure(figsize=(10, 6), dpi=180)
-#fig = plt.figure()
+fig = plt.figure()
 ###ax = fig.add_subplot(2, 1, 1)
 
 
@@ -334,8 +334,8 @@ def Plot_Smooth(X, Y, title):
     plt.plot(x1, yhat, label=title)
 
     #title = folder_name[:folder_name.rfind('\\')]
-    #title = title[title.rfind('\\') + 1:]
-    #plt.title(title, fontsize=30)
+    title = title[title.rfind('\\') + 1:]
+    plt.title(title, fontsize=30)
     plt.xlabel('\u03BB, нм')
     plt.ylabel('OD, у.е.')
 
@@ -470,7 +470,7 @@ def grow_definition(x, y):#выравнивание данных по поряд
     return [x_list, y_list]
 
 
-#Main_Menu()
+Main_Menu()
 plt.show()
 
 st.set_page_config(layout="wide", initial_sidebar_state="auto")
