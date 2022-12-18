@@ -1,3 +1,4 @@
+echo "backend: TkAgg" >> ~/.matplotlib/matplotlibrc
 import matplotlib.pyplot as plt
 import numpy as np
 
