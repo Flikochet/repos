@@ -471,13 +471,6 @@ def grow_definition(x, y):#выравнивание данных по поряд
 #Main_Menu()
 #plt.show()
 
-st.set_page_config(layout="wide", initial_sidebar_state="auto")
-st.write("""#уй""")
-
-
-
-
-
 
 
 
