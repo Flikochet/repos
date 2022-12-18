@@ -13,10 +13,6 @@ import math
 st.set_page_config(layout="wide", initial_sidebar_state="auto")
 st.write("""#уй""")
 
-###fig = plt.figure()
-plt.figure(figsize=(10, 6), dpi=180)
-#fig = plt.figure()
-###ax = fig.add_subplot(2, 1, 1)
 
 
 def rolling_window(a, win):
@@ -333,16 +329,16 @@ def Plot_Smooth(X, Y, title):
     x1 = X
     yhat = Y
 
-    plt.plot(x1, yhat, label=title)
+    #plt.plot(x1, yhat, label=title)
 
     #title = folder_name[:folder_name.rfind('\\')]
     #title = title[title.rfind('\\') + 1:]
     #plt.title(title, fontsize=30)
-    plt.xlabel('\u03BB, нм')
-    plt.ylabel('OD, у.е.')
+    #plt.xlabel('\u03BB, нм')
+    #plt.ylabel('OD, у.е.')
 
 
-    plt.legend(loc='lower left')
+    #plt.legend(loc='lower left')
 
 
 
