@@ -3,9 +3,8 @@ import streamlit as st
 from numpy import array
 from numpy import interp
 from numpy import linspace
-from scipy import interpolate
-from scipy.signal import savgol_filter
-from scipy import optimize
+#from scipy import interpolate
+#from scipy import optimize
 from statistics import mean
 from os import listdir
 import numpy as np
