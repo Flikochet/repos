@@ -470,7 +470,7 @@ def grow_definition(x, y):#выравнивание данных по поряд
     return [x_list, y_list]
 
 
-Main_Menu()
+#Main_Menu()
 plt.show()
 
 st.set_page_config(layout="wide", initial_sidebar_state="auto")
