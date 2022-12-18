@@ -1,4 +1,4 @@
-echo "backend: TkAgg" >> ~/.matplotlib/matplotlibrc
+import streamlit as st
 import matplotlib.pyplot as plt
 import numpy as np
 
