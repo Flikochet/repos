@@ -1,5 +1,5 @@
 import streamlit as st
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 from numpy import array
 from numpy import interp
 from numpy import linspace
