@@ -9,13 +9,21 @@ from os import listdir
 import streamlit as st
 import numpy as np
 import math
+import io
 
 
 ###fig = plt.figure()
 plt.figure(figsize=(10, 6), dpi=180)
-fig = plt.figure()
+#fig = plt.figure()
 ###ax = fig.add_subplot(2, 1, 1)
 
+def Stream_Gui():
+    uploaded_files = st.sidebar.file_uploader("Выберите файл", accept_multiple_files=False)
+    if uploaded_files is not None:
+        stringio = io.StringIO(uploaded_files.getvalue().decode("utf-8"))
+
+        string_data = stringio.read()
+        st.write(string_data)
 
 def rolling_window(a, win):
     window = win
@@ -470,11 +478,12 @@ def grow_definition(x, y):#выравнивание данных по поряд
     return [x_list, y_list]
 
 
+Stream_Gui()
 #Main_Menu()
 plt.show()
 
-st.set_page_config(layout="wide", initial_sidebar_state="auto")
-st.write("""#уй""")
+#st.set_page_config(layout="wide", initial_sidebar_state="auto")
+st.write("""Введите данные""")
 
 
 
