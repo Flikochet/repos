@@ -20,15 +20,11 @@ import altair as alt
 ###ax = fig.add_subplot(2, 1, 1)
 
 st.set_page_config(
-    page_title="Ex-stream-ly Cool App",
+    page_title="Flikochet Graph",
     page_icon="🧊",
-    layout="wide",
+    #layout="wide",
     initial_sidebar_state="auto",
-    menu_items={
-        'Get Help': 'https://www.extremelycoolapp.com/help',
-        'Report a bug': "https://www.extremelycoolapp.com/bug",
-        'About': "# This is a header. This is an *extremely* cool app!"
-    }
+    menu_items={'About': "Разработано Кирьяновым Константином МГТУ им. Баумана"}
 )
 
 def Stream_Gui():
@@ -246,8 +242,8 @@ def Write_File(folder_name, title, x, y):
 def Absorb_Graph_Menu(number, graph_count):
     st.title('Данные графика ' + str(number + 1))
     dust_level = st.number_input('Введите во сколько раз сигнал должен быть сильнее шума', value=1.5, step=0.1, key=number)
-    folder_name = st.text_input('Введите местоположение папки',
-                          r'C:\Users\relop\PycharmProjects\Fotonic\25.10.2022\25.10.2022\sample2\log_25окт22_171251',
+    folder_name = st.text_input('Введите полный путь до папки с файлами',
+                          r'',
                                 key=1000+number)
     border_1 = st.number_input('Введите нижнюю границу', value=2000, step=10, key=2000+number)
     border_2 = st.number_input('Введите верхнюю границу', value=2500, step=10, key=3000+number)
@@ -256,9 +252,17 @@ def Absorb_Graph_Menu(number, graph_count):
     figure_list = []
     for i in range(graph_count):
         figure_list.append(i + 1)
-    figure = st.selectbox('В какой координатной сетке вывести график поглощения? Укажите ее номер', np.array(figure_list), index=number, key=6000+number)
+    figure_list_OD = []
+    for i in range(2 * graph_count):
+        figure_list_OD.append(i + 1)
+    figure = st.selectbox('В какой координатной сетке вывести график поглощения? Укажите ее номер',
+                          np.array(figure_list), index=number, key=6000+number)
     reference_number = st.selectbox('Укажите номер графика референса', np.array(figure_list), index=number, key=7000+number)
     window_OD = st.number_input('Введите размер окна сглаживания для OD', value=2.0, step=0.1, key=8000+number)
+    raw_data_OD = st.selectbox('Выводить необработанные данные OD?', (False, True), key=9000 + number)
+    figure_OD = st.selectbox('В какой координатной сетке вывести график OD? Укажите ее номер',
+                          np.array(figure_list_OD), index=number, key=10000 + number)
+    if_reference = st.selectbox('Строить ли график OD?', (False, True), index=True, key=11000 + number)
     out_txt_data = False
     output_folder_name = ''
     #print('Выводить график в txt файл? Введите 1 если да или пропустите')
@@ -267,7 +271,8 @@ def Absorb_Graph_Menu(number, graph_count):
     #    print('Введите полный путь до папки, в которую сохранить файлы с графиком')
     #    output_folder_name = input()
     return [folder_name, dust_level, window, border_1, border_2,
-            raw_data, out_txt_data, output_folder_name, figure, number, reference_number, window_OD]
+            raw_data, out_txt_data, output_folder_name, figure, number,
+            reference_number, window_OD, figure_OD, raw_data_OD, if_reference]
 
 
 def OD_Graph_Menu(number):
@@ -372,10 +377,6 @@ def Plot_Absorb_Graph(input):
     figure = input[8]
     number = input[9]
 
-    title = folder_name[:folder_name.rfind('\\')]
-    title = title[title.rfind('\\') + 1:]
-    title = title[title.rfind('\\') + 1:]
-
     out = open_folder(folder_name, border_1, border_2)
     imposter_seek(out[0], out[1], dust_level, out[2])
     buf1 = grow_definition(out[0], out[1])
@@ -383,27 +384,36 @@ def Plot_Absorb_Graph(input):
     #if raw_data:
     #    plt.plot(buf2[0], buf2[1], color=(0, 0, 1), label='Оригинальные данные')
     if raw_data:
-        Plot(buf2[0], buf2[1], 'Оригинальные данные ' + title, figure)
+        Plot(buf2[0], buf2[1], 'Оригинальные данные ' + title_name(folder_name, 2), figure)
     buf = Smooth(buf2[0], buf2[1], window)
     x = buf[0]
     y = buf[1]
 
-    Plot(x, y, title, figure)
+    Plot(x, y, title_name(folder_name, 2), figure)
     st.line_chart(pd.DataFrame(y, index=x, columns=['График №' + str(number + 1)]))
     if out_txt_data:
         Write_File(output_folder_name, str(number), x, y)
 
 
-def Plot_OD_Graph(input_ref, input):
+def title_name(folder_name, depth):
+    title = folder_name[:folder_name.rfind('\\')]
+    for i in range(depth):
+        title = title[title.rfind('\\') + 1:]
+    return title
+
+
+def Plot_OD_Graph(input, input_ref):
     folder_name = input[0]
     dust_level = input[1]
     window = input[2]
-    window_OD = input[3]
-    border_1 = input[4]
-    border_2 = input[5]
+    border_1 = input[3]
+    border_2 = input[4]
     out_txt_data = input[6]
     output_folder_name = input[7]
-    number = input[8]
+    number = input[9]
+    window_OD = input[11]
+    figure_OD = input[12]
+    raw_data_OD = input[13]
 
     folder_name_ref = input_ref[0]
     dust_level_ref = input_ref[1]
@@ -430,8 +440,13 @@ def Plot_OD_Graph(input_ref, input):
     buf1 = OD_count(x_ref, y_ref, x, y)
     buf = Smooth(buf1[0], buf1[1], window_OD)
 
-    title = folder_name[:folder_name.rfind('\\')]
-    title = title[title.rfind('\\') + 1:]
+    if raw_data_OD:
+        Plot(buf[0], buf[1], 'Оригинальные данные OD ' + title_name(folder_name, 2), figure_OD)
+
+    Plot(buf[0], buf[1], "OD "+ title_name(folder_name, 2), figure_OD)
+
+    st.line_chart(pd.DataFrame(buf[1], index=buf[0], columns=['График OD №' + str(number + 1)]))
+
     #Plot_Smooth(buf[0], buf[1], title)
     if out_txt_data:
         Write_File(output_folder_name, str(number), buf[0], buf[1])
@@ -459,9 +474,12 @@ def Main_Menu():
         if calculation:
             for i in range(graph_count):
                 Plot_Absorb_Graph(setup_absorb_graph[i])
+                if setup_absorb_graph[i][14]:
+                    Plot_OD_Graph(setup_absorb_graph[i], setup_absorb_graph[setup_absorb_graph[i][10] - 1])
             set_list = []
             for i in range(graph_count):
                 set_list.append(setup_absorb_graph[i][8])
+                set_list.append(setup_absorb_graph[i][12])
             for i in range(len(list(set(set_list)))):
                 st.pyplot(plt.figure(i + 1))
     if graph_mode == '2':
@@ -481,7 +499,7 @@ def Main_Menu():
 
 
 def OD_count(x_ref, y_ref, x, y):#расчет самих данных для OD
-    x0 = linspace(x[0], x[-1], round(len(x)) * 10)
+    x0 = linspace(x[0], x[-1], round(len(x)))
     y1 = interp(x0, x, y)
     y1_ref = interp(x0, x_ref, y_ref)
     OD = []
