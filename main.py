@@ -224,7 +224,9 @@ def open_folder(folder_name, files_list):
                                                     method='bounded')
                 st.write(solution)
                 sol = str(solution)
+                st.write(solution)
                 sol = sol[3 + sol.find('x'):]
+                st.write(solution)
                 # plt.plot(x1, f(x1), color=(0.8, 0.8, 0.8))
 
                 X.append(float(sol))
