@@ -204,6 +204,7 @@ def open_folder(folder_name, files_list):
                 buf = file_read_mode_2(string_data)
             x_list = buf[0]
             y_list = buf[1]
+            st.write(x_list, y_list)
             max_wave = x_list[max(enumerate(y_list), key=lambda x: x[1])[0]]
             max_y = y_list[max(enumerate(y_list), key=lambda x: x[1])[0]]
             # plt.plot(x_list, y_list, color=(0.8, 0.8, 0.8))
