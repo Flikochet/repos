@@ -204,7 +204,6 @@ def open_folder(folder_name, files_list):
                 buf = file_read_mode_2(string_data)
             x_list = buf[0]
             y_list = buf[1]
-            st.write(x_list, y_list)
             max_wave = x_list[max(enumerate(y_list), key=lambda x: x[1])[0]]
             max_y = y_list[max(enumerate(y_list), key=lambda x: x[1])[0]]
             # plt.plot(x_list, y_list, color=(0.8, 0.8, 0.8))
@@ -222,11 +221,8 @@ def open_folder(folder_name, files_list):
                 solution = optimize.minimize_scalar(lambda x: -f(x),
                                                     bounds=[max_wave - delta_wave, max_wave + delta_wave],
                                                     method='bounded')
-                st.write(solution)
                 sol = str(solution)
-                st.write(sol)
                 sol = sol[3 + sol.find('x'):11 + sol.find('x')]
-                st.write(sol)
                 # plt.plot(x1, f(x1), color=(0.8, 0.8, 0.8))
 
                 X.append(float(sol))
