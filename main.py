@@ -225,7 +225,7 @@ def open_folder(folder_name, files_list):
                 st.write(solution)
                 sol = str(solution)
                 st.write(sol)
-                sol = sol[3 + sol.find('x'):]
+                sol = sol[3 + sol.find('x'):11 + sol.find('x')]
                 st.write(sol)
                 # plt.plot(x1, f(x1), color=(0.8, 0.8, 0.8))
 
