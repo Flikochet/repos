@@ -222,6 +222,7 @@ def open_folder(folder_name, files_list):
                 solution = optimize.minimize_scalar(lambda x: -f(x),
                                                     bounds=[max_wave - delta_wave, max_wave + delta_wave],
                                                     method='bounded')
+                st.write(solution)
                 sol = str(solution)
                 sol = sol[3 + sol.find('x'):]
                 # plt.plot(x1, f(x1), color=(0.8, 0.8, 0.8))
