@@ -249,8 +249,8 @@ def Absorb_Graph_Menu(number, graph_count):
     file_list = st.file_uploader('Переместите сюда папку с файлами', accept_multiple_files=True, key=1000+number)
     dust_level = st.number_input('Введите во сколько раз сигнал должен быть сильнее шума', value=1.5, step=0.1,
                                  key=2000+number)
-    border_1 = st.number_input('Введите нижнюю границу', value=2000, step=10, key=3000+number)
-    border_2 = st.number_input('Введите верхнюю границу', value=2500, step=10, key=4000+number)
+    border_1 = st.number_input('Введите нижнюю границу в нм', value=2000, step=10, key=3000+number)
+    border_2 = st.number_input('Введите верхнюю границу в нм', value=2500, step=10, key=4000+number)
     raw_data = st.selectbox('Выводить необработанные данные?', (False, True), key=5000+number)
     window = st.number_input('Введите размер окна сглаживания в нм', value=2.0, step=0.1, key=6000+number)
     figure_list = []
