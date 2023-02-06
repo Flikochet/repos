@@ -14,6 +14,8 @@ from io import BytesIO
 from io import StringIO
 from random import randint
 import altair as alt
+from bokeh.plotting import figure
+import random
 
 
 ###fig = plt.figure()
@@ -223,7 +225,7 @@ def open_folder(folder_name, files_list):
                                                     method='bounded')
                 sol = str(solution)
                 sol = sol[3 + sol.find('x'):11 + sol.find('x')]
-                # plt.plot(x1, f(x1), color=(0.8, 0.8, 0.8))
+                #plt.plot(x1, f(x1), color=(0.8, 0.8, 0.8))
 
                 X.append(float(sol))
                 Y.append(float(f(float(sol))))
@@ -244,13 +246,13 @@ def Write_File(folder_name, title, x, y):
 
 
 def Absorb_Graph_Menu(number, graph_count):
-    st.title('Данные графика ' + str(number + 1))
+    st.title('Данные образца ' + str(number + 1))
     folder_name = st.text_input('Введите название образца', 'sample', key=number)
     file_list = st.file_uploader('Переместите сюда папку с файлами', accept_multiple_files=True, key=1000+number)
     dust_level = st.number_input('Введите во сколько раз сигнал должен быть сильнее шума', value=1.5, step=0.1,
                                  key=2000+number)
-    border_1 = st.number_input('Введите нижнюю границу в нм', value=2000, step=10, key=3000+number)
-    border_2 = st.number_input('Введите верхнюю границу в нм', value=2500, step=10, key=4000+number)
+    border_1 = st.number_input('Введите нижнюю границу', value=2000, step=10, key=3000+number)
+    border_2 = st.number_input('Введите верхнюю границу', value=2500, step=10, key=4000+number)
     raw_data = st.selectbox('Выводить необработанные данные?', (False, True), key=5000+number)
     window = st.number_input('Введите размер окна сглаживания в нм', value=2.0, step=0.1, key=6000+number)
     figure_list = []
@@ -316,9 +318,18 @@ def Plot(X, Y, title, figure):
     #st.pyplot(plt.figure(figure))
 
 
+#def bokeh_plot(X, Y, title, figure):
 
 
-def Plot_Absorb_Graph(input):
+def random_color():
+    rgbl=[255,0,0]
+    random.randint(0, 255)
+    return (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+
+
+
+
+def Plot_Absorb_Graph(input, bokeh_figure):
     folder_name = input[0]
     dust_level = input[1]
     window = input[2]
@@ -327,7 +338,7 @@ def Plot_Absorb_Graph(input):
     raw_data = input[5]
     out_txt_data = input[6]
     output_folder_name = input[7]
-    figure = input[8]
+    figure_absorb = input[8]
     number = input[9]
     file_list = input[15]
 
@@ -338,13 +349,18 @@ def Plot_Absorb_Graph(input):
     #if raw_data:
     #    plt.plot(buf2[0], buf2[1], color=(0, 0, 1), label='Оригинальные данные')
     if raw_data:
-        Plot(buf2[0], buf2[1], 'Оригинальные данные ' + title_name(folder_name, 2), figure)
+        Plot(buf2[0], buf2[1], 'Оригинальные данные ' + title_name(folder_name, 2), figure_absorb)
     buf = Smooth(buf2[0], buf2[1], window)
     x = buf[0]
     y = buf[1]
 
-    Plot(x, y, title_name(folder_name, 2), figure)
-    st.line_chart(pd.DataFrame(y, index=x, columns=['График №' + str(number + 1)]))
+    #Plot(x, y, title_name(folder_name, 2), figure_absorb)
+
+    p = bokeh_figure[figure_absorb - 1]
+
+    p.line(list(x), list(y), legend_label=folder_name, line_width=2, color=random_color())
+
+    #st.line_chart(pd.DataFrame(y, index=x, columns=['График №' + str(number + 1)]))
     if out_txt_data:
         Write_File(output_folder_name, str(number), x, y)
 
@@ -357,7 +373,7 @@ def title_name(folder_name, depth):
     return title
 
 
-def Plot_OD_Graph(input, input_ref):
+def Plot_OD_Graph(input, input_ref, bokeh_figure):
     folder_name = input[0]
     dust_level = input[1]
     window = input[2]
@@ -400,9 +416,9 @@ def Plot_OD_Graph(input, input_ref):
     if raw_data_OD:
         Plot(buf[0], buf[1], 'Оригинальные данные OD ' + title_name(folder_name, 2), figure_OD)
 
-    Plot(buf[0], buf[1], "OD "+ title_name(folder_name, 2), figure_OD)
+    p = bokeh_figure[figure_OD - 1]
 
-    st.line_chart(pd.DataFrame(buf[1], index=buf[0], columns=['График OD №' + str(number + 1)]))
+    p.line(list(buf[0]), list(buf[1]), legend_label="OD " + folder_name + " to " + folder_name_ref, line_width=2, color=random_color())
 
     #Plot_Smooth(buf[0], buf[1], title)
     if out_txt_data:
@@ -419,16 +435,27 @@ def Main_Menu():
         setup_absorb_graph.append(Absorb_Graph_Menu(i, graph_count))
 
     if calculation:
-        for i in range(graph_count):
-            Plot_Absorb_Graph(setup_absorb_graph[i])
-            if setup_absorb_graph[i][14]:
-                Plot_OD_Graph(setup_absorb_graph[i], setup_absorb_graph[setup_absorb_graph[i][10] - 1])
         set_list = []
+        bokeh_figure = []
         for i in range(graph_count):
             set_list.append(setup_absorb_graph[i][8])
-            set_list.append(setup_absorb_graph[i][12])
+            if setup_absorb_graph[i][14]:
+                set_list.append(setup_absorb_graph[i][12])
+
         for i in range(len(list(set(set_list)))):
-            st.pyplot(plt.figure(i + 1))
+            #st.pyplot(plt.figure(i + 1))
+            bokeh_figure.append(figure(title='Graph №' + str(i + 1), x_axis_label='\u03BB'))
+
+        st.write(len(bokeh_figure))
+
+        for i in range(graph_count):
+            Plot_Absorb_Graph(setup_absorb_graph[i], bokeh_figure)
+            if setup_absorb_graph[i][14]:
+                Plot_OD_Graph(setup_absorb_graph[i], setup_absorb_graph[setup_absorb_graph[i][10] - 1], bokeh_figure)
+
+        for i in range(len(list(set(set_list)))):
+            st.bokeh_chart(bokeh_figure[i], use_container_width=True)
+
 
 
 def OD_count(x_ref, y_ref, x, y):#расчет самих данных для OD
